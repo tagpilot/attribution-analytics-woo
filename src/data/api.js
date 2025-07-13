@@ -15,15 +15,15 @@ export const getAnalyticsData = async (params = {}) => {
     const { startDate, endDate } = params;
     
     // Check if we have the WordPress AJAX setup
-    if (window.wcCustomAnalytics && window.wcCustomAnalytics.ajaxUrl) {
+    if (window.sourceAnalyticsWoo && window.sourceAnalyticsWoo.ajaxUrl) {
         // Use WordPress AJAX for older setups
         const formData = new FormData();
-        formData.append('action', 'wc_custom_analytics_data');
-        formData.append('nonce', window.wcCustomAnalytics.nonce);
+        formData.append('action', 'source_analytics_woo_data');
+        formData.append('nonce', window.sourceAnalyticsWoo.nonce);
         formData.append('start_date', startDate || '');
         formData.append('end_date', endDate || '');
         
-        const response = await fetch(window.wcCustomAnalytics.ajaxUrl, {
+        const response = await fetch(window.sourceAnalyticsWoo.ajaxUrl, {
             method: 'POST',
             body: formData,
         });

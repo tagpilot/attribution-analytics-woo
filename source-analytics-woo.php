@@ -8,9 +8,9 @@
  * Author URI: https://tagpilot.io
  * Text Domain: source-analytics-woo
  * Requires at least: 5.6
- * Tested up to: 6.3
+ * Tested up to: 6.8
  * WC requires at least: 5.7.0
- * WC tested up to: 8.0
+ * WC tested up to: 9.9
  * License:     GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -21,16 +21,16 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_CUSTOM_ANALYTICS_VERSION', '1.0.0');
-define('WC_CUSTOM_ANALYTICS_PLUGIN_FILE', __FILE__);
-define('WC_CUSTOM_ANALYTICS_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('WC_CUSTOM_ANALYTICS_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('WC_CUSTOM_ANALYTICS_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('SOURCE_ANALYTICS_WOO_VERSION', '1.0.0');
+define('SOURCE_ANALYTICS_WOO_PLUGIN_FILE', __FILE__);
+define('SOURCE_ANALYTICS_WOO_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('SOURCE_ANALYTICS_WOO_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('SOURCE_ANALYTICS_WOO_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 /**
  * Main plugin class
  */
-class WC_Custom_Analytics {
+class Source_Analaytics_Woo {
     
     /**
      * Plugin instance
@@ -92,7 +92,7 @@ class WC_Custom_Analytics {
      */
     private function init_hooks() {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-        add_action('wp_ajax_wc_custom_analytics_data', array($this, 'get_revenue_analytics'));
+        add_action('wp_ajax_source_analytics_woo_data', array($this, 'get_revenue_analytics'));
 
         add_filter('woocommerce_analytics_report_menu_items', function($links) {
 
@@ -117,12 +117,12 @@ class WC_Custom_Analytics {
         }
         
         $script_path = '/build/index.js';
-        $script_asset_path = WC_CUSTOM_ANALYTICS_PLUGIN_PATH . 'build/index.asset.php';
+        $script_asset_path = SOURCE_ANALYTICS_WOO_PLUGIN_PATH . 'build/index.asset.php';
         $script_info = file_exists($script_asset_path) 
             ? require($script_asset_path)
-            : array('dependencies' => array(), 'version' => WC_CUSTOM_ANALYTICS_VERSION);
+            : array('dependencies' => array(), 'version' => SOURCE_ANALYTICS_WOO_VERSION);
         
-        $script_url = WC_CUSTOM_ANALYTICS_PLUGIN_URL . 'build/index.js';
+        $script_url = SOURCE_ANALYTICS_WOO_PLUGIN_URL . 'build/index.js';
 
         $dependencies = array(
             'wc-components'
@@ -139,8 +139,8 @@ class WC_Custom_Analytics {
         wp_enqueue_script('source-analytics-woo-script');
         
         // Enqueue styles
-        $style_path = WC_CUSTOM_ANALYTICS_PLUGIN_URL . 'build/index.css';
-        if (file_exists(WC_CUSTOM_ANALYTICS_PLUGIN_PATH . 'build/index.css')) {
+        $style_path = SOURCE_ANALYTICS_WOO_PLUGIN_URL . 'build/index.css';
+        if (file_exists(SOURCE_ANALYTICS_WOO_PLUGIN_PATH . 'build/index.css')) {
             wp_enqueue_style(
                 'source-analytics-woo-style',
                 $style_path,
@@ -150,9 +150,9 @@ class WC_Custom_Analytics {
         }
         
         // Localize script with data
-        wp_localize_script('source-analytics-woo-script', 'wcCustomAnalytics', array(
+        wp_localize_script('source-analytics-woo-script', 'sourceAnalyticsWoo', array(
             'ajaxUrl'    => admin_url('admin-ajax.php'),
-            'nonce'      => wp_create_nonce('wc_custom_analytics_nonce'),
+            'nonce'      => wp_create_nonce('source_analytics_woo_nonce'),
             'restUrl'    => rest_url('wc/v3/'),
             'restNonce'  => wp_create_nonce('wp_rest'),
             'currency'   => get_woocommerce_currency(),
@@ -171,7 +171,7 @@ class WC_Custom_Analytics {
 
     public function get_revenue_analytics() {
         $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
-        if (!wp_verify_nonce($nonce, 'wc_custom_analytics_nonce')) {
+        if (!wp_verify_nonce($nonce, 'source_analytics_woo_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -317,4 +317,4 @@ class WC_Custom_Analytics {
 
 }
 
-WC_Custom_Analytics::get_instance();
+Source_Analaytics_Woo::get_instance();
