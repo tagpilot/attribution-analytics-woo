@@ -33,7 +33,6 @@ class SourcesReport extends Component {
     
     componentDidUpdate(prevProps) {
         const query = getQuery();
-        console.log("QUERY", getDateParamsFromQuery(query));
         const prevQuery = prevProps.query || {};
         
         if (
@@ -52,7 +51,6 @@ class SourcesReport extends Component {
         try {
             const query = getQuery();
             const dates = getCurrentDates(query);
-            console.log("FETCHDATA", dates);
             const data = await getAnalyticsData({
                 startDate: dates.primary.after,
                 endDate: dates.primary.before,
@@ -72,10 +70,7 @@ class SourcesReport extends Component {
     }
     
     onDateChange(data) {
-        const path = getNewPath(data);
-        const query = getQuery();
-        updateQueryString( data, path, query );
-        // window.history.pushState({}, '', path);
+        updateQueryString( data );
         this.fetchData();
     }
     

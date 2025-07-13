@@ -34,72 +34,10 @@ export const getAnalyticsData = async (params = {}) => {
         
         const result = await response.json();
         
-        // if (!result.success) {
-        //     throw new Error(result.data || 'Unknown error occurred');
-        // }
+        if (!result.success) {
+            throw new Error(result.data || 'Unknown error occurred');
+        }
         
         return result.data;
-    }
-    
-    // Fallback to REST API
-    const queryParams = new URLSearchParams();
-    if (startDate) queryParams.append('start_date', startDate);
-    if (endDate) queryParams.append('end_date', endDate);
-    
-    try {
-        return await apiFetch({
-            path: `/wc-custom-analytics/v1/analytics?${queryParams.toString()}`,
-            method: 'GET',
-        });
-    } catch (error) {
-        console.error('API fetch error:', error);
-        throw new Error(error.message || 'Failed to fetch analytics data');
-    }
-};
-
-/**
- * Get WooCommerce orders data using REST API
- *
- * @param {Object} params Parameters for the request
- * @return {Promise} Promise resolving to orders data
- */
-export const getOrdersData = async (params = {}) => {
-    const queryParams = new URLSearchParams({
-        per_page: 100,
-        status: 'completed,processing,on-hold',
-        ...params,
-    });
-    
-    try {
-        return await apiFetch({
-            path: `/wc/v3/orders?${queryParams.toString()}`,
-            method: 'GET',
-        });
-    } catch (error) {
-        console.error('Orders API error:', error);
-        throw new Error(error.message || 'Failed to fetch orders data');
-    }
-};
-
-/**
- * Get WooCommerce products data using REST API
- *
- * @param {Object} params Parameters for the request
- * @return {Promise} Promise resolving to products data
- */
-export const getProductsData = async (params = {}) => {
-    const queryParams = new URLSearchParams({
-        per_page: 100,
-        ...params,
-    });
-    
-    try {
-        return await apiFetch({
-            path: `/wc/v3/products?${queryParams.toString()}`,
-            method: 'GET',
-        });
-    } catch (error) {
-        console.error('Products API error:', error);
-        throw new Error(error.message || 'Failed to fetch products data');
     }
 };

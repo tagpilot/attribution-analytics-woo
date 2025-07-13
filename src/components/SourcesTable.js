@@ -9,8 +9,8 @@ import { Table, TableCard } from '@woocommerce/components';
  * Internal dependencies
  */
 
-function formatCurrency(val) {
-    return val;
+function formatCurrency(val, currency) {
+    return Math.round(val) + ' ' + currency;
 }
 
 const SourcesTable = ({ data, loading }) => {
@@ -88,7 +88,7 @@ const SourcesTable = ({ data, loading }) => {
             title={__('Sources', 'wc-custom-analytics')}
             headers={headers}
             isLoading={false}
-            rowsPerPage={10}
+            rowsPerPage={100}
             totalRows={rows.length}
             rows={rows}
             downloadable

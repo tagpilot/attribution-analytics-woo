@@ -3,13 +3,11 @@
  */
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { createElement, render } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import SourcesReport from './components/SourcesReport';
-import './style.scss';
 
 // Register the page for WooCommerce Admin routing
 addFilter('woocommerce_admin_reports_list', 'analytics/sources', (pages) => {
