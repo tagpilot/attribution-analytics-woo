@@ -1,16 +1,17 @@
 <?php
 /**
- * Plugin Name: Source Analytics Woo
- * Plugin URI:  https://wordpress.org/plugins/source-analytics-woo
+ * Plugin Name: Attribution Analytics for WooCommerce
+ * Plugin URI:  https://wordpress.org/plugins/attribution-analytics-for-woocommerce
  * Description: Learn which traffic sources and marketing channels are generating the most revenue
  * Version: 1.0.0
  * Author: Tag Pilot
  * Author URI: https://tagpilot.io
- * Text Domain: source-analytics-woo
+ * Text Domain: attribution-analytics-for-woocommerce
  * Requires at least: 5.6
  * Tested up to: 6.8
  * WC requires at least: 5.7.0
  * WC tested up to: 9.9
+ * Requires Plugins: woocommerce
  * License:     GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -82,7 +83,7 @@ class Source_Analaytics_Woo {
     public function woocommerce_missing_notice() {
         ?>
         <div class="notice notice-error">
-            <p><?php esc_html_e('WooCommerce Custom Analytics requires WooCommerce to be installed and active.', 'source-analytics-woo'); ?></p>
+            <p><?php esc_html_e('WooCommerce Custom Analytics requires WooCommerce to be installed and active.', 'attribution-analytics-for-woocommerce'); ?></p>
         </div>
         <?php
     }
@@ -129,20 +130,20 @@ class Source_Analaytics_Woo {
         );
         
         wp_register_script(
-            'source-analytics-woo-script',
+            'attribution-analytics-for-woocommerce-script',
             $script_url,
             array_merge($script_info['dependencies'], $dependencies),
             $script_info['version'],
             true
         );
         
-        wp_enqueue_script('source-analytics-woo-script');
+        wp_enqueue_script('attribution-analytics-for-woocommerce-script');
         
         // Enqueue styles
         $style_path = SOURCE_ANALYTICS_WOO_PLUGIN_URL . 'build/index.css';
         if (file_exists(SOURCE_ANALYTICS_WOO_PLUGIN_PATH . 'build/index.css')) {
             wp_enqueue_style(
-                'source-analytics-woo-style',
+                'attribution-analytics-for-woocommerce-style',
                 $style_path,
                 array(),
                 $script_info['version']
@@ -150,7 +151,7 @@ class Source_Analaytics_Woo {
         }
         
         // Localize script with data
-        wp_localize_script('source-analytics-woo-script', 'sourceAnalyticsWoo', array(
+        wp_localize_script('attribution-analytics-for-woocommerce-script', 'sourceAnalyticsWoo', array(
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'nonce'      => wp_create_nonce('source_analytics_woo_nonce'),
             'restUrl'    => rest_url('wc/v3/'),
@@ -158,12 +159,12 @@ class Source_Analaytics_Woo {
             'currency'   => get_woocommerce_currency(),
             'dateFormat' => wc_date_format(),
             'strings'    => array(
-                'loading'      => __('Loading...', 'source-analytics-woo'),
-                'error'        => __('Error loading data', 'source-analytics-woo'),
-                'noData'       => __('No data available', 'source-analytics-woo'),
-                'totalSales'   => __('Total Sales', 'source-analytics-woo'),
-                'totalOrders'  => __('Total Orders', 'source-analytics-woo'),
-                'avgOrderValue' => __('Average Order Value', 'source-analytics-woo'),
+                'loading'      => __('Loading...', 'attribution-analytics-for-woocommerce'),
+                'error'        => __('Error loading data', 'attribution-analytics-for-woocommerce'),
+                'noData'       => __('No data available', 'attribution-analytics-for-woocommerce'),
+                'totalSales'   => __('Total Sales', 'attribution-analytics-for-woocommerce'),
+                'totalOrders'  => __('Total Orders', 'attribution-analytics-for-woocommerce'),
+                'avgOrderValue' => __('Average Order Value', 'attribution-analytics-for-woocommerce'),
             ),
         ));
     }

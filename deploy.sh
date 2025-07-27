@@ -1,3 +1,3 @@
 #!/bin/bash
 
-zip source-analytics-woo.zip build/* readme.txt source-analytics-woo.php
+zip attribution-analytics-for-woocommerce.zip src/* build/* readme.txt attribution-analytics-for-woocommerce.php
