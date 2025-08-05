@@ -1,0 +1,33 @@
+.attribution-education {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.attribution-education__content h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+}
+
+.attribution-education__content h3:first-child {
+    margin-top: 0;
+}
+
+.attribution-education__content ul {
+    margin-left: 20px;
+    margin-bottom: 1em;
+}
+
+.attribution-education__content li {
+    margin-bottom: 0.8em;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

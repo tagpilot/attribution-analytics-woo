@@ -8,18 +8,19 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import SourcesReport from './components/SourcesReport';
+import './style.css';
 
 // Register the page for WooCommerce Admin routing
-addFilter('woocommerce_admin_reports_list', 'analytics/sources', (pages) => {
+addFilter('woocommerce_admin_reports_list', 'analytics/attribution', (pages) => {
     pages.push({
-        report: 'sources',
+        report: 'attribution',
         component: SourcesReport,
         navArgs: {
-            id: 'woocommerce-analytics-sources',
+            id: 'woocommerce-analytics-attribution',
         },
         breadcrumbs: [
-            __('Analytics', 'wc-custom-analytics'),
-            __('Custom Reports', 'wc-custom-analytics')
+            __('Analytics', 'attribution-analytics-for-woocommerce'),
+            __('Attribution', 'attribution-analytics-for-woocommerce')
         ],
         capability: "view_woocommerce_reports"
     });

@@ -3,7 +3,7 @@
  * Plugin Name: Attribution Analytics for WooCommerce
  * Plugin URI:  https://wordpress.org/plugins/attribution-analytics-for-woocommerce
  * Description: Learn which traffic sources and marketing channels are generating the most revenue
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Tag Pilot
  * Author URI: https://tagpilot.io
  * Text Domain: attribution-analytics-for-woocommerce
@@ -98,10 +98,10 @@ class Source_Analaytics_Woo {
         add_filter('woocommerce_analytics_report_menu_items', function($links) {
 
             array_splice($links, -1, 0, [[
-                "id" => "sources",
-                "title" => "Sources",
+                "id" => "attribution",
+                "title" => "Attribution",
                 "parent" => "woocommerce-analytics",
-                "path" => "/analytics/sources",
+                "path" => "/analytics/attribution",
             ]]);
 
             return $links;
@@ -140,12 +140,12 @@ class Source_Analaytics_Woo {
         wp_enqueue_script('attribution-analytics-for-woocommerce-script');
         
         // Enqueue styles
-        $style_path = SOURCE_ANALYTICS_WOO_PLUGIN_URL . 'build/index.css';
-        if (file_exists(SOURCE_ANALYTICS_WOO_PLUGIN_PATH . 'build/index.css')) {
+        $style_path = SOURCE_ANALYTICS_WOO_PLUGIN_URL . 'build/style-index.css';
+        if (file_exists(SOURCE_ANALYTICS_WOO_PLUGIN_PATH . 'build/style-index.css')) {
             wp_enqueue_style(
                 'attribution-analytics-for-woocommerce-style',
                 $style_path,
-                array(),
+                array('wc-components'),
                 $script_info['version']
             );
         }
@@ -183,16 +183,24 @@ class Source_Analaytics_Woo {
 
         $end_date = isset($_POST['end_date']) ? gmdate('Y-m-d H:i:s', strtotime(sanitize_text_field(wp_unslash($_POST['end_date'])))) : null;
         $start_date = isset($_POST['start_date']) ? gmdate('Y-m-d H:i:s', strtotime(sanitize_text_field(wp_unslash($_POST['start_date'])))) : null;
+        $breakdown_by = isset($_POST['breakdown_by']) ? sanitize_text_field(wp_unslash($_POST['breakdown_by'])) : 'source_medium';
 
         // Get orders with attribution data
         $orders_data = $this->get_orders_with_attribution($start_date, $end_date);
 
         if (empty($orders_data)) {
-            wp_send_json_error('No orders found for the selected period');
+            // Return empty data structure instead of error
+            wp_send_json_success(array(
+                'source_summary' => array(),
+                'revenue_trends' => array(),
+                'total_revenue' => 0,
+                'total_orders' => 0
+            ));
+            return;
         }
 
         // Process data for analytics
-        $analytics_data = $this->process_orders_data($orders_data);
+        $analytics_data = $this->process_orders_data($orders_data, $breakdown_by);
 
         wp_send_json_success($analytics_data);
     }
@@ -230,17 +238,41 @@ class Source_Analaytics_Woo {
         return $results;
     }
 
-    private function process_orders_data($orders_data) {
+    private function process_orders_data($orders_data, $breakdown_by = 'source_medium') {
         $revenue_by_source = array();
         $orders_by_source = array();
         $daily_revenue = array();
 
         foreach ($orders_data as $order) {
             $order_total = round(floatval($order->order_total));
-            // Clean up source data
-            $source = (empty($order->source) ? "unknown" : $order->source)
-                . ' / '
-                . (empty($order->medium) ? 'unknown' : $order->medium);
+
+            // Determine breakdown key based on parameter
+            switch ($breakdown_by) {
+                case 'source_type':
+                    $source = empty($order->source_type) ? 'unknown' : $order->source_type;
+                    break;
+                case 'campaign':
+                    $source = empty($order->campaign) ? 'unknown' : $order->campaign;
+                    break;
+                case 'device_type':
+                    $source = empty($order->device_type) ? 'unknown' : $order->device_type;
+                    break;
+                case 'referrer':
+                    $source = empty($order->referrer) ? 'direct' : $order->referrer;
+                    break;
+                case 'source':
+                    $source = empty($order->source) ? 'unknown' : $order->source;
+                    break;
+                case 'medium':
+                    $source = empty($order->medium) ? 'unknown' : $order->medium;
+                    break;
+                case 'source_medium':
+                default:
+                    $source = (empty($order->source) ? "unknown" : $order->source)
+                        . ' / '
+                        . (empty($order->medium) ? 'unknown' : $order->medium);
+                    break;
+            }
 
             // Revenue by source
             if (!isset($revenue_by_source[$source])) {
