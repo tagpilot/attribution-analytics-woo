@@ -12,7 +12,7 @@ import apiFetch from '@wordpress/api-fetch';
  * @return {Promise} Promise resolving to analytics data
  */
 export const getAnalyticsData = async (params = {}) => {
-    const { startDate, endDate } = params;
+    const { startDate, endDate, breakdownBy = 'source_medium' } = params;
     
     // Check if we have the WordPress AJAX setup
     if (window.sourceAnalyticsWoo && window.sourceAnalyticsWoo.ajaxUrl) {
@@ -22,6 +22,7 @@ export const getAnalyticsData = async (params = {}) => {
         formData.append('nonce', window.sourceAnalyticsWoo.nonce);
         formData.append('start_date', startDate || '');
         formData.append('end_date', endDate || '');
+        formData.append('breakdown_by', breakdownBy);
         
         const response = await fetch(window.sourceAnalyticsWoo.ajaxUrl, {
             method: 'POST',
